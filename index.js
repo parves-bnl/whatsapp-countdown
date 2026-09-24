@@ -33,7 +33,7 @@ const client = new Client({
 
 client.on('qr', (qr) => {
     console.log('--- SCAN QR CODE BELOW WITH WHATSAPP ---');
-    qrcode.generate(qr, { small: true });
+    qrcode.generate(qr, { small: false });
 });
 
 client.on('ready', () => {
