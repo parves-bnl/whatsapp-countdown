@@ -3,7 +3,6 @@ const { MongoStore } = require('wwebjs-mongo');
 const mongoose = require('mongoose');
 const http = require('http');
 
-// Render Health Check Server
 const PORT = process.env.PORT || 3000;
 http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
@@ -46,22 +45,30 @@ mongoose.connect(MONGO_URI).then(() => {
         console.log('==================================================');
     });
 
-    client.on('ready', () => {
+    client.on('ready', async () => {
         console.log('WhatsApp Bot is connected and running!');
-        updateCountdown(client);
+        await updateCountdown(client);
         setInterval(() => updateCountdown(client), 3600000); // Every 1 hour
     });
 
     client.initialize();
+}).catch(err => {
+    console.error('MongoDB Connection Error:', err);
 });
 
 async function updateCountdown(client) {
     try {
         const chats = await client.getChats();
-        const group = chats.find(c => c.isGroup && c.name === GROUP_NAME);
+        const groupChats = chats.filter(c => c.isGroup);
+        
+        console.log('--- FOUND GROUPS IN YOUR ACCOUNT ---');
+        groupChats.forEach(g => console.log(`Group Name: "${g.name}"`));
+        console.log('------------------------------------');
+
+        const group = groupChats.find(c => c.name.trim().toLowerCase() === GROUP_NAME.trim().toLowerCase());
 
         if (!group) {
-            console.log(`Group "${GROUP_NAME}" not found! Check group name.`);
+            console.log(`❌ Target group "${GROUP_NAME}" not found in listed groups.`);
             return;
         }
 
@@ -79,7 +86,7 @@ async function updateCountdown(client) {
         const countdownText = `🏖️ COX'S BAZAR TOUR 🌊\n✈️ Flight: Oct 07 @ 10:30 AM\n\n⏳ TIME REMAINING:\n👉 ${days} Days, ${hours} Hours left!\n\n_Auto-updated live countdown_`;
 
         await group.setDescription(countdownText);
-        console.log(`Updated countdown: ${days} days, ${hours} hours left.`);
+        console.log(`✅ SUCCESS! Updated description to: ${days} days, ${hours} hours left.`);
     } catch (err) {
         console.error('Error updating group description:', err);
     }
