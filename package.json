@@ -4,10 +4,12 @@
   "description": "WhatsApp Group Description Countdown Bot for Cox's Bazar Flight",
   "main": "index.js",
   "scripts": {
+    "postinstall": "npx puppeteer browsers install chrome",
     "start": "node index.js"
   },
   "dependencies": {
     "whatsapp-web.js": "^1.23.0",
-    "qrcode-terminal": "^0.12.0"
+    "qrcode-terminal": "^0.12.0",
+    "puppeteer": "^22.0.0"
   }
 }
