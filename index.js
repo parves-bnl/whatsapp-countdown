@@ -1,7 +1,7 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const http = require('http');
 
-// Simple web server for Render health check
+// Simple web server so Render doesn't shut down the service
 const PORT = process.env.PORT || 3000;
 http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
@@ -29,10 +29,10 @@ const client = new Client({
     }
 });
 
-// Print clean QR code URL
+// Generates a clean URL link for the QR Code
 client.on('qr', (qr) => {
     console.log('==================================================');
-    console.log('COPY AND OPEN THIS LINK IN A NEW TAB TO SCAN QR:');
+    console.log('OPEN THIS LINK IN YOUR BROWSER TO SCAN QR CODE:');
     console.log(`https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(qr)}`);
     console.log('==================================================');
 });
@@ -40,7 +40,7 @@ client.on('qr', (qr) => {
 client.on('ready', () => {
     console.log('WhatsApp Bot is connected and running!');
     updateCountdown();
-    setInterval(updateCountdown, 3600000); // Update every 1 hour
+    setInterval(updateCountdown, 3600000); // Auto-update every 1 hour
 });
 
 async function updateCountdown() {
@@ -49,7 +49,7 @@ async function updateCountdown() {
         const group = chats.find(c => c.isGroup && c.name === GROUP_NAME);
 
         if (!group) {
-            console.log(`Group "${GROUP_NAME}" not found! Check name spelling.`);
+            console.log(`Group "${GROUP_NAME}" not found! Check group name.`);
             return;
         }
 
