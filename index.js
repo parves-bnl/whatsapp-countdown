@@ -1,9 +1,7 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal');
 const http = require('http');
-const path = require('path');
 
-// Web server for Render health check
+// Simple web server for Render health check
 const PORT = process.env.PORT || 3000;
 http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
@@ -31,9 +29,12 @@ const client = new Client({
     }
 });
 
+// Print clean QR code URL
 client.on('qr', (qr) => {
-    console.log('=== OPEN THIS URL TO SCAN YOUR QR CODE ===');
+    console.log('==================================================');
+    console.log('COPY AND OPEN THIS LINK IN A NEW TAB TO SCAN QR:');
     console.log(`https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(qr)}`);
+    console.log('==================================================');
 });
 
 client.on('ready', () => {
